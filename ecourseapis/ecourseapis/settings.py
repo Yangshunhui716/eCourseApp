@@ -40,8 +40,19 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'courses.apps.CoursesConfig',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'rest_framework',
+    'drf_yasg'
 ]
+
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+cloudinary.config(
+  	cloud_name = "databreak",
+  	api_key = "143511745215512",
+  	api_secret = "f35MCfbdfoIhB8Z6XSrQVTmGQBA"
+)
 
 CKEDITOR_UPLOAD_PATH = "images/ckeditors/"
 

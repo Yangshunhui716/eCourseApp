@@ -1,10 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Title</title>
-</head>
-<body>
+{% extends 'admin/base_site.html' %}
+{% block content %}
+<h1>THỐNG KÊ THÔNG TIN CÁC KHOÁ HỌC</h1>
+<h2>Số lượng khoá học: {{ course_count }}</h2>
+<ul>
+    {% for s in stats %}
+    <li><strong>{{ s.name }}</strong> có {{ s.count }} bài học</li>
+    {% endfor %}
+</ul>
+<div style="width:50%">
+    <canvas id="myChart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    window.onload = function(){
+        let data = [];
+        let labels = [];
 
-</body>
-</html>
+        {% for s in stats %}
+            data.push({{ s.count }})
+            labels.push('{{ s.name }}')
+        {% endfor %}
+
+        const ctx = document.getElementById('myChart');
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '# THỐNG KÊ KHÓA HỌC',
+            data: data,
+            borderWidth: 1,
+            backgroundColor: ['Red', 'Green', 'Blue']
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+</script>
+{% endblock %}
