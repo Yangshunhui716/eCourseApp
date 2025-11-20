@@ -6,7 +6,7 @@ from ckeditor.fields import RichTextField
 from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
-    pass
+    avatar = CloudinaryField(null=True)
 
 class Category(models.Model):
     name = models.CharField(max_length=50, unique=True)
@@ -25,7 +25,7 @@ class BaseModel(models.Model):
 class Course(BaseModel):
     subject = models.CharField(max_length=255)
     description = models.TextField(null=True)
-    image = CloudinaryField()
+    image = CloudinaryField(null=True)
     # models.ImageField(upload_to='courses/%Y/%m', null=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
@@ -35,11 +35,36 @@ class Course(BaseModel):
 class Lesson(BaseModel):
     subject = models.CharField(max_length=255)
     content = RichTextField()
-    image = models.ImageField(upload_to='lesson/%Y/%m', null=True)
+    image = CloudinaryField(null=True)
+    # image = models.ImageField(upload_to='lesson/%Y/%m', null=True)
     course = models.ForeignKey(Course, on_delete=models.RESTRICT)
+    tags = models.ManyToManyField('Tag')
 
     def __str__(self):
         return self.subject
 
     class Meta:
         unique_together = ('subject', 'course')
+
+class Tag(BaseModel):
+    name = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.name
+
+class Interaction(BaseModel):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+class Comment(Interaction):
+    content = models.TextField(blank=False, null=False)
+
+    def __str__(self):
+        return self.content
+
+class Like(Interaction):
+    class Meta:
+        unique_together = ('lesson', 'user')
